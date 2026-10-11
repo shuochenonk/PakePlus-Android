@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#E9EAE7">
+  <meta name="description" content="平静的多巴胺阶段 —— 块式工作 + 刺激管理，重建工作节律。">
+  <title>平静的多巴胺阶段</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="phase-work">
+
+  <div class="app">
+
+    <header class="topbar">
+      <span class="brand">平静的多巴胺阶段</span>
+      <span class="week-hint" id="weekHint"></span>
+    </header>
+
+    <!-- ════ 视图 1：计时器 ════ -->
+    <main class="view active" id="view-timer" data-view="timer">
+      <div class="timer-wrap">
+        <div class="phase-head">
+          <span class="phase-dot active" id="phaseDot"></span>
+          <span class="status-label" id="statusLabel">工作时间</span>
+        </div>
+        <div class="timer-digits" id="timerDigits">15:00</div>
+        <div class="phase-hint" id="phaseHint">完成一个工作块，就有一段确定的奖励。</div>
+
+        <button class="btn-main" id="btnMain" aria-label="开始工作块">开始</button>
+
+        <div class="btn-row">
+          <button class="btn-ghost" id="btnSkip" hidden>跳过奖励，继续工作</button>
+          <button class="btn-ghost" id="btnReset">重置</button>
+        </div>
+
+        <div class="today-block">
+          <div class="today-line">
+            <span id="todayText">今日 0 / 0 块</span>
+            <span id="todayStreak"></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ════ 视图 2：计划 ════ -->
+    <main class="view" id="view-plan" data-view="plan">
+      <h1 class="view-title">四周计划</h1>
+      <p class="view-sub">选当前周数，应用自动套用单块时长与每日目标。</p>
+
+      <div class="week-selector" id="weekSelector"></div>
+      <div class="card" id="weekDetail"></div>
+
+      <div class="group-label">计划规则</div>
+      <div class="card" id="planRules"></div>
+
+      <div class="group-label">每日作息模板</div>
+      <div class="card">
+        <ul class="list" id="scheduleList"></ul>
+      </div>
+
+      <div class="group-label">运动音频阶梯</div>
+      <div class="card" id="audioLadder"></div>
+    </main>
+
+    <!-- ════ 视图 3：应急 ════ -->
+    <main class="view" id="view-emergency" data-view="emergency">
+      <h1 class="view-title">现在该干嘛</h1>
+      <p class="view-sub">无聊、冲动上头、射精后低谷、半梦半醒幻想——点开对应一项。</p>
+      <div id="emergencyList"></div>
+    </main>
+
+    <!-- ════ 视图 4：统计 ════ -->
+    <main class="view" id="view-stats" data-view="stats">
+      <h1 class="view-title">数据回顾</h1>
+      <p class="view-sub">中性记录，不评判。断更不清零，只帮你看清趋势。</p>
+
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="card">
+        <div class="card-title">本周块数</div>
+        <div class="bars" id="barChart"></div>
+      </div>
+
+      <div class="group-label">今日打卡</div>
+      <div class="card">
+        <div class="row-actions" id="checkinRow"></div>
+      </div>
+
+      <div class="group-label">恢复阶段提示</div>
+      <div class="card" id="recoveryStages"></div>
+    </main>
+
+    <!-- ════ 视图 5：更多 ════ -->
+    <main class="view" id="view-more" data-view="more">
+      <h1 class="view-title">更多</h1>
+
+      <div class="group-label">奖励白名单</div>
+      <div class="card" id="rewardCard"></div>
+
+      <div class="group-label">碎片空档决策器</div>
+      <div class="card" id="gapCard"></div>
+
+      <div class="group-label">求知任务库</div>
+      <div class="card" id="knowledgeCard"></div>
+
+      <div class="group-label">方案模板</div>
+      <div class="card" id="profileCard"></div>
+
+      <div class="group-label">计时参数</div>
+      <div class="card">
+        <div class="switch-row">
+          <span>单块工作时长（分钟）</span>
+          <input class="inline-input" type="number" id="workMinInput" min="5" max="60" value="15">
+        </div>
+        <div class="switch-row">
+          <span>奖励时长（分钟）</span>
+          <input class="inline-input" type="number" id="restMinInput" min="1" max="30" value="5">
+        </div>
+      </div>
+
+      <div class="group-label">设置</div>
+      <div class="card">
+        <div class="switch-row">
+          <span>深色主题</span>
+          <label class="switch"><input type="checkbox" id="themeSwitch"><span class="slider"></span></label>
+        </div>
+        <div class="switch-row">
+          <span>到点通知与提醒</span>
+          <label class="switch"><input type="checkbox" id="notifySwitch" checked><span class="slider"></span></label>
+        </div>
+        <div class="switch-row">
+          <span>提示音</span>
+          <label class="switch"><input type="checkbox" id="soundSwitch" checked><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div class="group-label">数据</div>
+      <div class="card">
+        <p style="margin-bottom:10px">数据只存本机，不上传。可导出备份，或导入恢复。</p>
+        <div class="row-actions">
+          <button class="btn-outline" id="exportJsonBtn">导出备份</button>
+          <button class="btn-outline" id="importBtn">导入备份</button>
+          <button class="btn-outline" id="clearBtn">清空数据</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" hidden>
+      </div>
+
+      <div class="group-label">内容屏蔽联动</div>
+      <div class="card">
+        <p>本应用不做内容屏蔽，只做引导。可配合系统能力，把「正确行为」变成默认项：</p>
+        <ul class="list" style="margin-top:8px">
+          <li>手机系统「屏幕使用时间」限制成人内容与推荐流 App 时长</li>
+          <li>路由器 / DNS 过滤（如成人站点黑名单）</li>
+          <li>关闭各 App 的「个性化推荐」与「无限流」入口</li>
+        </ul>
+      </div>
+
+      <div class="group-label">关于</div>
+      <div class="card">
+        <p class="card-title">平静的多巴胺阶段</p>
+        <p id="aboutText"></p>
+      </div>
+    </main>
+
+    <!-- ════ 底部导航 ════ -->
+    <nav class="tabbar" aria-label="主导航">
+      <button class="tab active" data-target="timer" aria-label="计时">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        <span>计时</span>
+      </button>
+      <button class="tab" data-target="plan" aria-label="计划">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M8.5 3.5v3M15.5 3.5v3"/></svg>
+        <span>计划</span>
+      </button>
+      <button class="tab" data-target="emergency" aria-label="应急">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
+        <span>应急</span>
+      </button>
+      <button class="tab" data-target="stats" aria-label="统计">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20v-7M12 20V6M18 20v-11"/></svg>
+        <span>统计</span>
+      </button>
+      <button class="tab" data-target="more" aria-label="更多">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></svg>
+        <span>更多</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
